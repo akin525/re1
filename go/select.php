@@ -122,7 +122,7 @@ while($row = mysqli_fetch_array($result)) {
                             </div>
                         </td>
                         <td>
-                            <h4><b>Paystack</b></h4>
+                            <h4><b>Paystack</b></h4>````
                             <span><a href="#" class="__cf_email__" data-cfemail="0367626d6a666f67746a6866436b6c776e626a6f2d606c6e">NGN.<?php echo  $amount; ?> </a></span>
             </div>
         </td>
@@ -260,12 +260,13 @@ if($numrows==1) {
         <td>
             <div class="contact-info">
 
-                <form action="select.php" method="post">
+                <form action="billpayment.php" method="post">
                     <input type="hidden" name="amount" value="<?php  print $amount; ?>">
                     <input type="hidden" name="product" value="<?php  print $product; ?>">
                     <input type="hidden" name="productid" value="<?php  print $productid; ?>">
                     <input type="hidden" name="id" value="<?php  print $productid; ?>">
                     <input type="hidden" name="number" value="<?php  print $number; ?>">
+                    <input type="hidden" name="refid" value="<?php  print $scode; ?>">
                     <input type="hidden" name="payment_method" value="wallet">
                     <button type="submit" class="btn btn-rounded btn-outline-info"><i class="fa fa-check"> </i> Pay From Wallet </button>
 

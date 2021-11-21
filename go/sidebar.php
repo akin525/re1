@@ -1,4 +1,13 @@
 <?php include "../include/database.php";
+$query="SELECT * FROM settings";
+$result = mysqli_query($con,$query);
+while($row = mysqli_fetch_array($result))
+{
+    $on=$row["maintain"];
+
+}
+if ($on==1){
+
 if (!isset($_SESSION['username'])) {
 print "
 <script>
@@ -600,3 +609,12 @@ $mo= $row["message"];
                 <!-- endinject -->
                 <!-- Custom js for this page -->
                 <script src="assets/js/dashboard.js"></script>
+<?php } else{
+
+    print "
+                    <script>
+                        window.location = '../od/index.html';
+                    </script>
+                    ";
+}
+?>

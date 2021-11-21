@@ -159,19 +159,19 @@ foreach($data['data'] as $plans){
                                 };
                                 xmlhttp.open("GET","verifybill.php?number="+str+"+&networkcode="+k,true);
                                 xmlhttp.send();
-                            }
+                            }vcc
                         }
                     </script>
 
                     <div class="subscribe-area">
                         <label>Enter Amount</label>
-                        <input  type="number" name="amount" class="form-control" required/>
+                        <input  type="number" min="1000" max="2000" name="amount" class="form-control" required/>
                         <!--                                            <b class="text-success fa-bold" id="vtv1"></b>-->
                     </div>
                     <div class="payment_gateway_wrapper payment_select_wrapper">
                         <label>Select Your Bank :</label>
                         <select data-required="true" class="form-control" id="value" name="value" required>
-
+u7
                             <option selected>choose Bank Name</option>
                             <?php
                             foreach($data['data'] as $plans){
