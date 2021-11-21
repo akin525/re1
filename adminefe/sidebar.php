@@ -175,6 +175,14 @@ while($row = mysqli_fetch_array($result)) {
 					<span class="menu-title">Notification</span>
 				</a>
 			</li>
+            <li class="nav-item menu-items">
+                <a class="nav-link" href="okp.php">
+					<span class="menu-icon">
+						<i class="mdi mdi-notification-clear-all"></i>
+					</span>
+                    <span class="menu-title">Control Website</span>
+                </a>
+            </li>
     <li class="nav-item menu-items">
                 <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic">
               <span class="menu-icon">

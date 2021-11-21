@@ -1,6 +1,7 @@
 <?php
 
-include_once ("../include/database.php");
+include_once ("sidebar.php");
+
 if (!isset($_SESSION['username'])) {
     print "<script>
 					window.location = 'login.php';
@@ -21,13 +22,13 @@ while ($row = mysqli_fetch_array($result)) {
 
 
 $product_type="";
-$topay= intval(mysqli_real_escape_string($con,$_GET["amount"]));
-$refid= mysqli_real_escape_string($con,$_GET["refid"]);
-$product= mysqli_real_escape_string($con,$_GET["product"]);
-$productid=mysqli_real_escape_string($con,$_GET['productid']);
-$phone=mysqli_real_escape_string($con,$_GET['number']);
-$GLOBALS['recipient']=mysqli_real_escape_string($con,$_GET['number']);
-$GLOBALS['method']=mysqli_real_escape_string($con,$_GET['method']);
+$topay= intval(mysqli_real_escape_string($con,$_POST["amount"]));
+$refid= mysqli_real_escape_string($con,$_POST["refid"]);
+$product= mysqli_real_escape_string($con,$_POST["product"]);
+$productid=mysqli_real_escape_string($con,$_POST['productid']);
+$phone=mysqli_real_escape_string($con,$_POST['number']);
+$GLOBALS['recipient']=mysqli_real_escape_string($con,$_POST['number']);
+$GLOBALS['method']=mysqli_real_escape_string($con,$_POST['method']);
 
 
 $query="SELECT * FROM users where username ='" . $_SESSION['username'] . "'";
@@ -70,218 +71,228 @@ function pro($tran_stat, $product, $payer, $topay, $refid, $results, $con){
 $resellerURL='https://app.mcd.5starcompany.com.ng/api/reseller/';
 
 //start buying
-if($product_type=="data"){
+$query="SELECT * FROM  wallet WHERE username = '" . $_SESSION['username'] . "'";
+$result = mysqli_query($con,$query);
+while($row = mysqli_fetch_array($result))
+{
+    $balance="$row[balance]";
+//                        $amount=$row["balance"];
+}
+if ( $balance<$topay ){
+//    $msg=$msg."You Cant Make Purchase Above". "NGN" .$amount." from your wallet. Your wallet balance is NGN $balance. Please Fund Wallet And Retry or Pay Online Using Our Alternative Payment Methods.";
+    echo "<script>
+ window.location='dashboard.php';</script>";
+}else {
+
+    if ($product_type == "data") {
 //    buy($networkcode, $product_type, $phone, $product, $payer, $topay, $refid, $con);
-    $curl = curl_init();
+        $curl = curl_init();
 
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $resellerURL.'pay',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_SSL_VERIFYHOST => 0,
-        CURLOPT_SSL_VERIFYPEER => 0,
-        CURLOPT_CUSTOMREQUEST => 'POST',
-        CURLOPT_POSTFIELDS => array('service' => 'data','coded' => $networkcode,'phone' => $phone, 'reseller_price'=>$topay),
-        CURLOPT_HTTPHEADER => array(
-            'Authorization: '.$token
-        ),
-    ));
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://test.mcd.5starcompany.com.ng/api/reseller/pay',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array('service' => 'data', 'coded' => $networkcode, 'phone' => $phone, 'reseller_price' => $topay),
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: ' . $token
+            ),
+        ));
 
-    $response = curl_exec($curl);
+        $response = curl_exec($curl);
 
-    curl_close($curl);
-//    echo $response;
+        curl_close($curl);
+        echo $response;
 //echo $token;
-    $data=json_decode($response, true);
-    $success=$data["success"];
-    $tran=$data["ref"];
-    $tran1=$data["discountAmount"];
+        $data = json_decode($response, true);
+        $success = $data["success"];
+        $tran = $data["ref"];
+        $tran1 = $data["discountAmount"];
 //return;
-    if($success==1) {
-        $query = mysqli_query($con, "insert into bill_payment (product, username, amount, transactionid, paymentmethod,status, server_response, discountamount, number) values ('$title', '$payer', '$topay', '$tran', 'Wallet Payment', '$success', '$response', '$tran1', '$phone')");
-        echo "<script language='javascript'>
+        if ($success == 1) {
+            $query = mysqli_query($con, "insert into bill_payment (product, username, amount, transactionid, paymentmethod,status, server_response, discountamount, number) values ('$title', '$payer', '$topay', '$tran', 'Wallet Payment', '$success', '$response', '$tran1', '$phone')");
+            echo "<script language='javascript'>
  let message = 'Transaction Successfully';
                                     alert(message);
  window.location='myinvoice.php';</script>";
-    }
-    if($success==0){
-        $query=mysqli_query($con,"update wallet set balance=balance+$topay where username='" . $_SESSION['username'] . "'");
-        echo "<script language='javascript'>
+        }
+        if ($success == 0) {
+            $query = mysqli_query($con, "update wallet set balance=balance+$topay where username='" . $_SESSION['username'] . "'");
+            echo "<script language='javascript'>
   let message = '$topay Refunded';
                                     alert(message);
  window.location='mcderror.php';</script>";
-    }
-}
-
-elseif ($product_type=="airtime") {
+        }
+    } elseif ($product_type == "airtime") {
 //    buy($networkcode, $product_type, $phone, $product, $payer, $topay, $refid, $con);
-    $curl = curl_init();
+        $curl = curl_init();
 
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $resellerURL.'pay',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_SSL_VERIFYHOST => 0,
-        CURLOPT_SSL_VERIFYPEER => 0,
-        CURLOPT_CUSTOMREQUEST => 'POST',
-        CURLOPT_POSTFIELDS => array('service' => 'airtime','coded' => $networkcode,'phone' => $phone,'amount' => $topay, 'reseller_price'=>$topay),
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $resellerURL . 'pay',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array('service' => 'airtime', 'coded' => $networkcode, 'phone' => $phone, 'amount' => $topay, 'reseller_price' => $topay),
 
-        CURLOPT_HTTPHEADER => array(
-            'Authorization: '.$token
-        )));
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: ' . $token
+            )));
 
-    $response = curl_exec($curl);
+        $response = curl_exec($curl);
 
-    curl_close($curl);
-    // echo $response;
+        curl_close($curl);
+        // echo $response;
 //    return;
-    $data=json_decode($response, true);
-    $success=$data["success"];
-    $tran=$data["ref"];
-    $tran1=$data["discountAmount"];
-    if($success==1) {
-        $query = mysqli_query($con, "insert into bill_payment (product, username, amount, transactionid, paymentmethod,status, server_response, discountamount, number) values ('$title', '$payer', '$topay', '$tran', 'Wallet Payment', '$success', '$response', '$tran1', '$phone')");
-        echo "<script language='javascript'>
+        $data = json_decode($response, true);
+        $success = $data["success"];
+        $tran = $data["ref"];
+        $tran1 = $data["discountAmount"];
+        if ($success == 1) {
+            $query = mysqli_query($con, "insert into bill_payment (product, username, amount, transactionid, paymentmethod,status, server_response, discountamount, number) values ('$title', '$payer', '$topay', '$tran', 'Wallet Payment', '$success', '$response', '$tran1', '$phone')");
+            echo "<script language='javascript'>
  let message = 'Transaction Successfully';
                                     alert(message);
  window.location='myinvoice.php';</script>";
-    }
-    if($success==0){
-        $query=mysqli_query($con,"update wallet set balance=balance+$topay where username='" . $_SESSION['username'] . "'");
-        echo "<script language='javascript'>
+        }
+        if ($success == 0) {
+            $query = mysqli_query($con, "update wallet set balance=balance+$topay where username='" . $_SESSION['username'] . "'");
+            echo "<script language='javascript'>
   let message = '$topay Refunded';
                                     alert(message);
  window.location='mcderror.php';</script>";
-    }
-}
-elseif ($product_type=="tv") {
-    $curl = curl_init();
+        }
+    } elseif ($product_type == "tv") {
+        $curl = curl_init();
 
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $resellerURL.'pay',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_SSL_VERIFYHOST => 0,
-        CURLOPT_SSL_VERIFYPEER => 0,
-        CURLOPT_CUSTOMREQUEST => 'POST',
-        CURLOPT_POSTFIELDS => array('service' => 'tv','coded' => $networkcode,'phone' => $phone, 'reseller_price'=>$topay),
-        CURLOPT_HTTPHEADER => array(
-            'Authorization: '.$token
-        ),
-    ));
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $resellerURL . 'pay',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array('service' => 'tv', 'coded' => $networkcode, 'phone' => $phone, 'reseller_price' => $topay),
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: ' . $token
+            ),
+        ));
 
-    $response = curl_exec($curl);
+        $response = curl_exec($curl);
 
-    curl_close($curl);
+        curl_close($curl);
 //    echo $response;
-    $data=json_decode($response, true);
-    $success=$data["success"];
-    $m=$data["message"];
-    $net=$data["ref"];
-    $tran1=$data["discountAmount"];
+        $data = json_decode($response, true);
+        $success = $data["success"];
+        $m = $data["message"];
+        $net = $data["ref"];
+        $tran1 = $data["discountAmount"];
 
-    if($success==1) {
-        $query = mysqli_query($con, "insert into bill_payment (product, username, amount, transactionid, paymentmethod,status, server_response, discountamount) values ('$title', '$payer', '$topay', '$net', 'Wallet Payment', '$success', '$response', '$tran1')");
-        echo "<script language='javascript'> 
+        if ($success == 1) {
+            $query = mysqli_query($con, "insert into bill_payment (product, username, amount, transactionid, paymentmethod,status, server_response, discountamount) values ('$title', '$payer', '$topay', '$net', 'Wallet Payment', '$success', '$response', '$tran1')");
+            echo "<script language='javascript'> 
 let message = '$m';
                                     alert(message);
 window.location='myinvoice.php';</script>";
-    }
-    if($success==0){
-        $query=mysqli_query($con,"update wallet set balance=balance+$topay where username='" . $_SESSION['username'] . "'");
-        echo "<script language='javascript'>
+        }
+        if ($success == 0) {
+            $query = mysqli_query($con, "update wallet set balance=balance+$topay where username='" . $_SESSION['username'] . "'");
+            echo "<script language='javascript'>
   let message = '$topay Refunded';
                                     alert(message);
  window.location='mcderror.php';</script>";
-    }
-}
-elseif ($product_type=="nepa") {
-    $curl = curl_init();
+        }
+    } elseif ($product_type == "nepa") {
+        $curl = curl_init();
 
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $resellerURL.'pay',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_SSL_VERIFYHOST => 0,
-        CURLOPT_SSL_VERIFYPEER => 0,
-        CURLOPT_CUSTOMREQUEST => 'POST',
-        CURLOPT_POSTFIELDS => array('service' => 'electricity','coded' => $networkcode,'phone' => $phone, 'amount' => $topay, 'reseller_price'=>$topay),
-        CURLOPT_HTTPHEADER => array(
-            'Authorization: '.$token
-        ),
-    ));
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $resellerURL . 'pay',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array('service' => 'electricity', 'coded' => $networkcode, 'phone' => $phone, 'amount' => $topay, 'reseller_price' => $topay),
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: ' . $token
+            ),
+        ));
 
-    $response = curl_exec($curl);
+        $response = curl_exec($curl);
 
-    curl_close($curl);
+        curl_close($curl);
 //    echo $response;
-    $data=json_decode($response, true);
-    $success=$data["success"];
-    $m=$data["message"];
-    $net=$data["ref"];
-    $tran1=$data["discountAmount"];
-    $tran2=$data["token"];
-    if($success==1) {
-        $query = mysqli_query($con, "insert into bill_payment (product, username, amount, transactionid, paymentmethod,status, server_response, discountamount, token) values ('$title', '$payer', '$topay', '$net', 'Wallet Payment', '$success', '$response', '$tran1', '$tran2')");
-        echo "<script language='javascript'> 
+        $data = json_decode($response, true);
+        $success = $data["success"];
+        $m = $data["message"];
+        $net = $data["ref"];
+        $tran1 = $data["discountAmount"];
+        $tran2 = $data["token"];
+        if ($success == 1) {
+            $query = mysqli_query($con, "insert into bill_payment (product, username, amount, transactionid, paymentmethod,status, server_response, discountamount, token) values ('$title', '$payer', '$topay', '$net', 'Wallet Payment', '$success', '$response', '$tran1', '$tran2')");
+            echo "<script language='javascript'> 
 let message = '$m';
                                     alert(message);
 window.location='myinvoice.php';</script>";
-    }
-    if($success==0){
-        $query=mysqli_query($con,"update wallet set balance=balance+$topay where username='" . $_SESSION['username'] . "'");
-        echo "<script language='javascript'>
+        }
+        if ($success == 0) {
+            $query = mysqli_query($con, "update wallet set balance=balance+$topay where username='" . $_SESSION['username'] . "'");
+            echo "<script language='javascript'>
   let message = '$topay Refunded';
                                     alert(message);
  window.location='mcderror.php';</script>";
+        }
     }
-}
 
-$query="SELECT * FROM users where username ='" . $_SESSION['username'] . "'";
-$result = mysqli_query($con,$query);
-while ($row = mysqli_fetch_array($result)) {
-    $username = $row["username"];
-    $name = $row["name"];
-    $email = $row["email"];
-}$query="SELECT * FROM wallet where username ='" . $_SESSION['username'] . "'";
-$result = mysqli_query($con,$query);
-while ($row = mysqli_fetch_array($result)) {
-    $bala = $row["balance"];
-}
-$username=decryptdata($username);
-$name=decryptdata($name);
-$mail= "info@renomobilemoney.com";
-$to = decryptdata($email);
-$from = $mail;
+    $query = "SELECT * FROM users where username ='" . $_SESSION['username'] . "'";
+    $result = mysqli_query($con, $query);
+    while ($row = mysqli_fetch_array($result)) {
+        $username = $row["username"];
+        $name = $row["name"];
+        $email = $row["email"];
+    }
+    $query = "SELECT * FROM wallet where username ='" . $_SESSION['username'] . "'";
+    $result = mysqli_query($con, $query);
+    while ($row = mysqli_fetch_array($result)) {
+        $bala = $row["balance"];
+    }
+    $username = decryptdata($username);
+    $name = decryptdata($name);
+    $mail = "info@renomobilemoney.com";
+    $to = decryptdata($email);
+    $from = $mail;
 
-$headers = "From: $from";
-$headers = "From: " . $from . "\r\n";
-$headers .= "Reply-To: ". $from . "\r\n";
-$headers .= "MIME-Version: 1.0\r\n";
-$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+    $headers = "From: $from";
+    $headers = "From: " . $from . "\r\n";
+    $headers .= "Reply-To: " . $from . "\r\n";
+    $headers .= "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 
-$subject = "$username|Transactional Email | $refid";
+    $subject = "$username|Transactional Email | $refid";
 
-$body = "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><title>Express Mail</title></head><body>";
-$body .= "<table style='width: 100%;'>";
-$body .= "<thead style='text-align: center;'><tr><td style='border:none;' colspan='2'>";
-$body .= " <table class='es-wrapper' width='100%' cellspacing='0' cellpadding='0' style='mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;padding:0;Margin:0;width:100%;height:100%;background-repeat:repeat;background-position:center top;background-color:#FAFAFA'> 
+    $body = "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><title>Express Mail</title></head><body>";
+    $body .= "<table style='width: 100%;'>";
+    $body .= "<thead style='text-align: center;'><tr><td style='border:none;' colspan='2'>";
+    $body .= " <table class='es-wrapper' width='100%' cellspacing='0' cellpadding='0' style='mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;padding:0;Margin:0;width:100%;height:100%;background-repeat:repeat;background-position:center top;background-color:#FAFAFA'> 
      <tr> 
       <td valign='top' style='padding:0;Margin:0'> 
        <table class='es-content' cellspacing='0' cellpadding='0' align='center' style='mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%'> 
@@ -366,7 +377,7 @@ $body .= " <table class='es-wrapper' width='100%' cellspacing='0' cellpadding='0
                  </tr> 
                </table> 
                 </tr>  ";
-$body .= "  <tr> 
+    $body .= "  <tr> 
               <td align='left' style='padding:0;Margin:0;padding-bottom:20px;padding-left:20px;padding-right:20px'> 
                <table width='100%' cellspacing='0' cellpadding='0' style='mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px'> 
                  <tr> 
@@ -435,7 +446,7 @@ $body .= "  <tr>
            </table></td> 
          </tr> 
        </table>  ";
-$body .= "  <table class='es-content' cellspacing='0' cellpadding='0' align='center' style='mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%'> 
+    $body .= "  <table class='es-content' cellspacing='0' cellpadding='0' align='center' style='mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%'> 
          <tr> 
           <td align='center' style='padding:0;Margin:0'> 
            <table class='es-content-body' style='mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:transparent;width:600px' cellspacing='0' cellpadding='0' bgcolor='#FFFFFF' align='center'> 
@@ -457,10 +468,9 @@ $body .= "  <table class='es-content' cellspacing='0' cellpadding='0' align='cen
        </table></td> 
      </tr> 
    </table> ";
-$send = mail($to, $subject, $body, $headers);
-$send = mail($from, $subject, $body, $headers);
+    $send = mail($to, $subject, $body, $headers);
+    $send = mail($from, $subject, $body, $headers);
 
 
-
-
+}
 ?>

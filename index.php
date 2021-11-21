@@ -1,4 +1,13 @@
+<?php include "include/database.php";
+$query="SELECT * FROM settings";
+$result = mysqli_query($con,$query);
+while($row = mysqli_fetch_array($result))
+{
+    $on=$row["maintain"];
 
+}
+if ($on==1){
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,7 +42,7 @@
     <link rel="icon" href="./assets/images/favicon.png">
 </head>
 <body>
-    
+
     <!-- Navigation -->
     <nav id="navbar" class="navbar navbar-expand-lg fixed-top navbar-dark" aria-label="Main navigation">
         <div class="container">
@@ -53,7 +62,7 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#header">Home</a>
                     </li>
-                    <?php include "include/database.php";?>
+<!--                    --><?php //include "include/database.php";?>
                     <?php if( isset($_SESSION['username']) ){
                     $query = "SELECT * FROM  users WHERE username='" . $_SESSION['username'] . "'";
                     $result = mysqli_query($con, $query);
@@ -119,7 +128,7 @@
 
     <!-- Home -->
     <section class="home py-5 d-flex align-items-center" id="header">
-        <div class="container text-light py-5"  data-aos="fade-right"> 
+        <div class="container text-light py-5"  data-aos="fade-right">
             <h1 class="headline"><span class="home_text">We Provide </span><br>The Best Tools To Save</h1>
             <p class="para para-light py-3">We help you save money with our our secure safe lock plans. Save and earn 5-10% per annum</p>
             <div class="d-flex align-items-center">
@@ -147,7 +156,7 @@
 
     <!-- Information -->
     <section class="information">
-        <div class="container-fluid">  
+        <div class="container-fluid">
             <div class="row text-light">
                 <div class="col-lg-4 text-center p-5" data-aos="zoom-in">
                     <i class="fas fa-tachometer-alt fa-3x p-2"></i>
@@ -159,7 +168,7 @@
                     <h4 class="py-3">Opening Of Account</h4>
                     <p class="para-light">Open a savings account entirely online with no need for paper work & signature.</p>
                 </div>
-                <div class="col-lg-4 text-center p-5 text-dark"  data-aos="zoom-in"> 
+                <div class="col-lg-4 text-center p-5 text-dark"  data-aos="zoom-in">
                     <i class="fas fa-headset fa-3x p-2"></i>
                     <h4 class="py-3">24/7 Support </h4>
                     <p class="para-light">We offer instant recharge of Airtime, Databundle, CableTV (DStv, GOtv & Startimes), Electricity Bill Payment and Educational PIN(s) with instant delivery</p>
@@ -167,7 +176,7 @@
             </div>
         </div> <!-- end of container -->
     </section> <!-- end of information -->
-    
+
 
     <!-- About -->
     <section class="about d-flex align-items-center text-light py-5" id="about">
@@ -183,7 +192,7 @@
                         <a class="btn" href="#your-link">Learn More</a>
                     </div>
                 </div>
-                <div class="col-lg-5 text-center py-4 py-sm-0" data-aos="fade-down"> 
+                <div class="col-lg-5 text-center py-4 py-sm-0" data-aos="fade-down">
                     <img class="img-fluid" src="./assets/images/about.jpg" alt="about" >
                 </div>
             </div> <!-- end of row -->
@@ -197,7 +206,7 @@
     <section class="services d-flex align-items-center py-5" id="services">
         <div class="container text-light">
             <div class="text-center pb-4" >
-                <p>OUR SERVICES</p> 
+                <p>OUR SERVICES</p>
                 <h2 class="py-2">Explore unlimited possibilities</h2>
                 <p class="para-light">We help you Save and Keep your Funds Securely</p>
             </div>
@@ -214,35 +223,35 @@
                         <i class="fas fa-wifi fa-2x"></i>
                         <h4 class="py-2"> Mobile Data</h4>
                         <p class="para-light">Start enjoying this very low rates Data plan for your internet browsing databundle.</p>
-                    </div>                    
+                    </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="card bg-transparent">
                         <i class="fas fa-phone fa-2x"></i>
                         <h4 class="py-2">Instant Withdraw</h4>
                         <p class="para-light">Withdrawal Speed: Up to 4 hours .General rules for depositing and withdrawing funds . If a deposit or withdrawal is not subject to instant execution</p>
-                    </div>                    
+                    </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="card bg-transparent">
                         <i class="fas fa-mobile fa-2x"></i>
                         <h4 class="py-2">Referral Provides</h4>
                         <p class="para-light">A referral program is an organized process in which customers are rewarded for spreading the word.</p>
-                    </div>                    
+                    </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="card bg-transparent">
                         <i class="fas fa-home fa-2x"></i>
                         <h4 class="py-2">SECURITY</h4>
                         <p class="para-light">Your payment is secure and your details will never be at risk</p>
-                    </div>                    
+                    </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="card bg-transparent">
                         <i class="fas fa-tv fa-2x"></i>
                         <h4 class="py-2">Cable Subscription</h4>
                         <p class="para-light">Instantly Activate Cable subscription with favourable discount compare to others</p>
-                    </div>                    
+                    </div>
                 </div>
             </div> <!-- end of row -->
         </div> <!-- end of container -->
@@ -461,20 +470,20 @@
                                 <div class="col-lg-6">
                                     <div class="form-group py-2">
                                         <input type="text" class="form-control form-control-input" id="exampleFormControlInput1" placeholder="Enter name">
-                                    </div>                                
+                                    </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group py-2">
                                         <input type="email" class="form-control form-control-input" id="exampleFormControlInput2" placeholder="Enter phone number">
-                                    </div>                                 
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group py-1">
                                 <input type="email" class="form-control form-control-input" id="exampleFormControlInput3" placeholder="Enter email">
-                            </div>  
+                            </div>
                             <div class="form-group py-2">
                                 <textarea class="form-control form-control-input" id="exampleFormControlTextarea1" rows="6" placeholder="Message"></textarea>
-                            </div>                            
+                            </div>
                         </div>
                         <div class="my-3">
                             <a class="btn form-control-submit-button" href="#your-link">Submit</a>
@@ -482,7 +491,7 @@
                     </div> <!-- end of div -->
                 </div> <!-- end of col -->
                 <div class="col-lg-6 d-flex align-items-center" data-aos="fade-down">
-                    <img class="img-fluid d-none d-lg-block" src="./assets/images/contact.jpg" alt="contact">        
+                    <img class="img-fluid d-none d-lg-block" src="./assets/images/contact.jpg" alt="contact">
                 </div> <!-- end of col -->
             </div> <!-- end of row -->
         </div> <!-- end of container -->
@@ -582,7 +591,7 @@
                         <div class="d-flex align-items-center py-2">
                             <i class="fas fa-caret-right"></i>
                             <a href="#"><p class="ms-3">Privacy</p></a>
-                            
+
                         </div>
                         <div class="d-flex align-items-center py-2">
                             <i class="fas fa-caret-right"></i>
@@ -607,7 +616,7 @@
                     <div class="d-flex align-items-center">
                         <div class="input-group mb-3">
                             <input type="text" class="form-control p-2" placeholder="Enter Email" aria-label="Recipient's email">
-                            <button class="btn-secondary text-light"><i class="fas fa-envelope fa-lg"></i></button>       
+                            <button class="btn-secondary text-light"><i class="fas fa-envelope fa-lg"></i></button>
                         </div>
                     </div>
                 </div> <!-- end of col -->
@@ -651,7 +660,7 @@
     </button>
     <!-- end of back to top button -->
 
-    
+
     <!-- Scripts -->
     <script src="./js/bootstrap.min.js"></script><!-- Bootstrap framework -->
     <script src="./js/purecounter.min.js"></script> <!-- Purecounter counter for statistics numbers -->
@@ -660,3 +669,12 @@
     <script src="./js/script.js"></script>  <!-- Custom scripts -->
 </body>
 </html>
+<?php } else{
+
+    print "
+                    <script>
+                        window.location = 'od/index.html';
+                    </script>
+                    ";
+}
+?>
