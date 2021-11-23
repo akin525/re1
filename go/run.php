@@ -1,4 +1,4 @@
-<?php include_once("include/database.php");
+<?php include("include/database.php");
 // Check, if username session is NOT set then this page will jump to login page
 
 
@@ -14,7 +14,7 @@ $refid=$data["paymentReference"];
 $acct= strtoupper($data["accountDetails"]["accountName"]);
 $bank=$data["accountDetails"]["bankCode"];
 $amount=$data["accountDetails"]["amountPaid"];
-$no=substr( $data["accountDetails"]["accountNumber"],3);
+$no=substr( $data["accountDetails"]["accountNumber"],6);
 //  echo $amount;
 // echo $bank;
 //echo $acct;

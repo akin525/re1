@@ -20,6 +20,7 @@
                             <th>Product Name</th>
                             <th>Payment ID</th>
                             <th>Price</th>
+                            <th>phone No</th>
                             <th>Date</th>
                             <th>Token(Available Only Electricity</th>
                             <th>Action</th>
@@ -28,7 +29,7 @@
 
                         <tbody>
                         <?php
-                        $query="SELECT * FROM bill_payment where username ='" . $_SESSION['username'] . "'";
+                        $query="SELECT * FROM bill_payment where username ='" . $_SESSION['username'] . "' order by id desc";
                         $result = mysqli_query($con,$query);
                         while($row = mysqli_fetch_array($result))
                         {
@@ -50,6 +51,7 @@
                                 <td><a href="#"><?php echo "$row[product]"; ?></a></td>
                                 <td><i class="fa fa-lg"></i><?php echo "$row[transactionid]"; ?></td>
                                 <td><div class="label <?php echo $color; ?> ">NGN.<?php echo "$row[amount]"; ?></div></td>
+                                <td><div class="label <?php echo $color; ?> "><?php echo "$row[number]"; ?></div></td>
                                 <td><?php echo "$row[timestamp]"; ?></td>
                                 <td><?php echo "$row[token]"; ?></td>
                                 <form action="invoice.php" method="post">

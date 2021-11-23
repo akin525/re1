@@ -52,21 +52,7 @@ while($row = mysqli_fetch_array($result)){
 
 //echo $networkcode, $phone;
 
-function pro($tran_stat, $product, $payer, $topay, $refid, $results, $con){
-    $query="SELECT * FROM  wallet WHERE username='" . $_SESSION['username'] . "'";
-    $result = mysqli_query($con,$query);
-    while($row = mysqli_fetch_array($result)){
-        $balance="$row[balance]";
-    }
 
-//    $query=mysqli_query($con,"insert into bill_payment (status,product, username, amount, transactionid, paymentmethod, server_response) values ('$tran_stat','$product', '$payer', '$topay', '$refid', '". $GLOBALS['method']."', '$results')");
-
-    if($tran_stat==0){
-        $refund=$balance+$topay;
-        $query=mysqli_query($con,"update wallet set balance='".$refund."' where username='" . $_SESSION['username'] . "'");
-    }
-    echo "<script language='javascript'> window.location='mcderror.php';</script>";
-}
 // $resellerURL='https://test.mcd.5starcompany.com.ng/api/reseller';
 $resellerURL='https://app.mcd.5starcompany.com.ng/api/reseller/';
 
@@ -82,7 +68,10 @@ if ( $balance<$topay ){
 //    $msg=$msg."You Cant Make Purchase Above". "NGN" .$amount." from your wallet. Your wallet balance is NGN $balance. Please Fund Wallet And Retry or Pay Online Using Our Alternative Payment Methods.";
     echo "<script>
  window.location='dashboard.php';</script>";
-}else {
+}else if ($topay<0){
+    echo "<script>
+ window.location='dashboard.php';</script>";
+} else {
     $query=mysqli_query($con,"update wallet set balance=balance-$topay where username='".$_SESSION['username']."'");
     // $query=mysqli_query($con,"insert into bill_payment (product, username, amount, transactionid, paymentmethod,status) values ('$title', '$user', '$amount', '$scode', 'Wallet Payment', '$status')");
 
@@ -93,7 +82,7 @@ if ( $balance<$topay ){
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://test.mcd.5starcompany.com.ng/api/reseller/pay',
+            CURLOPT_URL =>  $resellerURL . 'pay',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -112,7 +101,7 @@ if ( $balance<$topay ){
         $response = curl_exec($curl);
 
         curl_close($curl);
-        echo $response;
+//        echo $response;
 //echo $token;
         $data = json_decode($response, true);
         $success = $data["success"];
@@ -124,7 +113,7 @@ if ( $balance<$topay ){
             echo "<script language='javascript'>
  let message = 'Transaction Successfully';
                                     alert(message);
-// window.location='myinvoice.php';</script>";
+ window.location='myinvoice.php';</script>";
         }
         if ($success == 0) {
             $query = mysqli_query($con, "update wallet set balance=balance+$topay where username='" . $_SESSION['username'] . "'");

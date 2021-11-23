@@ -153,8 +153,8 @@ while($row = mysqli_fetch_array($result)) {
     <!-- partial:partials/_sidebar.html -->
     <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-<!--            <a class="" href="../index.php"><img src="images/lo.jpeg" alt="logo" /></a>-->
-<!--            <a class="sidebar-brand brand-logo-mini" href="../index.php"><img src="images/lo.jpeg" alt="logo" /></a>-->
+            <a class="" href="../index.php"><img width="50" height="50"  src="images/lo.jpeg" alt="logo" /></a>
+            <a class="sidebar-brand brand-logo-mini" href="../index.php"><img width="150" height="150" src="images/lo.jpeg" alt="logo" /></a>
         </div>
         <ul class="nav">
             <li class="nav-item profile">

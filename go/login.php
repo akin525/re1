@@ -101,7 +101,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['todo']))
     <link rel="stylesheet" href="assets/css/style.css">
 <!--    <link rel="stylesheet" href="pre.css">-->
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="assets/images/logo2.png" />
+    <link rel="shortcut icon" href="images/lo.jpeg" />
 </head>
 
 

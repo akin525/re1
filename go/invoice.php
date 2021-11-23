@@ -72,7 +72,7 @@
 
                                     <div class="row mrg-0">
                                         <div class="col-md-6">
-                                            <div id="logo"><img src="images/lo.jpeg" class="img-responsive" alt=""></div>
+                                            <div id="logo"><img width="150" height="150" src="images/lo.jpeg" class="img-responsive" alt=""></div>
 
                                         </div>
 

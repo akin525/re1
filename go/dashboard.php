@@ -8,7 +8,7 @@
                         <img src="assets/images/dashboard/Group126@2x.png" class="gradient-corona-img img-fluid" alt="">
                     </div>
                     <div class="col-5 col-sm-7 col-xl-8 p-0">
-                        <h4 class="mb-1 mb-sm-0">Efe User Dashboard</h4>
+                        <h4 class="mb-1 mb-sm-0">Reno User Dashboard</h4>
                         <p class="mb-0 font-weight-normal d-none d-sm-block">SAVE SMART, SAVE SECURELY, SAVE REGULARLY!</p>
                     </div>
                     <div class="col-3 col-sm-2 col-xl-2 pl-0 text-center">
@@ -247,7 +247,7 @@ $unpaid = $row[0];
     <div class="card-body">
         <h6 class="text-white font-weight-bold">Your Referral Link</h6>
         <!-- The text field -->
-        <input class="text-success form-control"  id="myInput" value=https://efemobilemoney.com/go/register.php?refer=<?php echo $username; ?> readonly/>
+        <input class="text-success form-control"  id="myInput" value=https://renomobilemoney.com/go/register.php?refer=<?php echo $username; ?> readonly/>
         <!-- The button used to copy the text -->
         <button onclick="myFunction()" class="btn badge-success">Copy Referral Link</button>
     </div>
